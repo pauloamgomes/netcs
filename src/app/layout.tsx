@@ -19,7 +19,7 @@ import {
 import { contentfulGqlQuery } from "~/lib/contentful";
 import { themes } from "~/lib/themes";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const querySiteSettings = gql`
   ${FragmentNavigationLink}

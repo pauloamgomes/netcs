@@ -32,13 +32,14 @@ export function WithBackgroundImageHero({
         {image?.url && (
           <Image
             src={contentfulImgUrl(image, {
+              width: 1280,
               aspectRatio: "16:9",
             })}
             className="object-cover object-center -z-10"
             alt={image.title || ""}
             fill
             priority
-            quality={50}
+            quality={60}
             sizes={"100vw"}
           />
         )}

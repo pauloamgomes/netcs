@@ -59,8 +59,8 @@ export async function WithSideImageHero({
           >
             <Image
               src={contentfulImgUrl(image, {
-                width: 1280,
-                height: 1280,
+                width: 720,
+                height: 720,
                 fit: "fill",
               })}
               fill
@@ -137,11 +137,11 @@ export async function WithSideImageHero({
                 className={clsx(
                   "btn btn-outline mt-4",
                   variantColor === "Primary" &&
-                    "text-white border-white hover:bg-white/10 hover:border-white",
+                  "text-white border-white hover:bg-white/10 hover:border-white",
                   variantColor === "Secondary" &&
-                    "text-white border-white hover:bg-white/10 hover:border-white",
+                  "text-white border-white hover:bg-white/10 hover:border-white",
                   variantColor === "Accent" &&
-                    "text-white border-white hover:bg-white/10 hover:border-white"
+                  "text-white border-white hover:bg-white/10 hover:border-white"
                 )}
                 href={getNavigationLinkUrl(cta) || "#"}
               >
