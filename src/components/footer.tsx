@@ -19,13 +19,13 @@ export function Footer({ site }: { site: SiteSettings }) {
               entryId: site.sys.id,
               fieldId: "mainMenuItems",
             })}
-            className="flex gap-x-4 md:place-self-center md:justify-self-end"
+            className="flex flex-col sm:flex-row gap-x-4 md:place-self-center md:justify-self-end"
           >
             {menuItems?.map((item) => (
               <Link
                 key={item?.sys.id}
                 href={getPageUrl(item?.page) || item?.externalUrl || "#"}
-                className="text-sm md:text-lg p-1"
+                className="text-xl sm:text-lg p-1"
               >
                 {item?.label}
               </Link>
