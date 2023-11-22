@@ -1,5 +1,6 @@
 import "./globals.css";
 
+import { Analytics } from '@vercel/analytics/react';
 import clsx from "clsx";
 import { gql } from "graphql-request";
 import type { Metadata } from "next";
@@ -130,6 +131,8 @@ export default async function RootLayout({
             <Script src="/live-preview.mjs" />
           </>
         )}
+
+        <Analytics />
       </body>
     </html>
   );

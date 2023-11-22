@@ -32,6 +32,7 @@
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
     "@types/ua-parser-js": "^0.7.39",
+    "@vercel/analytics": "^1.1.1",
     "assert": "^2.1.0",
     "clsx": "^2.0.0",
     "dotenv": "^16.3.1",
