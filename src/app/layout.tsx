@@ -41,6 +41,11 @@ const querySiteSettings = gql`
           __typename
           slug
         }
+        seoTitle
+        seoDescription
+        seoImage {
+          ...FragmentAsset
+        }
         mainMenuItemsCollection(limit: 6) {
           items {
             ...FragmentNavigationLink
