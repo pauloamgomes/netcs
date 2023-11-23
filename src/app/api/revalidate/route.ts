@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   const headersList = headers();
   const secret = headersList.get("secret");
 
-  const { contentType = "", slug } = await request.json();
+  const { contentType = "", slug, global = false } = await request.json();
 
   const entry = {
     __typename: contentTypes[contentType] || "",
@@ -29,6 +29,11 @@ export async function POST(request: NextRequest) {
 
   if ((slug === "homepage" || path) && secret === NEXT_REVALIDATE_SECRET) {
     revalidatePath(`/${path}`);
+    return Response.json({ revalidated: true, now: Date.now() });
+  }
+
+  if (global && secret === NEXT_REVALIDATE_SECRET) {
+    revalidatePath("/", "layout");
     return Response.json({ revalidated: true, now: Date.now() });
   }
 
