@@ -22,6 +22,7 @@ const options = {
   managementToken,
   contentFile,
   uploadAssets: true,
+  assetsDirectory: path.join(__dirname, "export"),
 };
 
 console.log(`
