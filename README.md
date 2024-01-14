@@ -90,7 +90,7 @@ turso db create netcs-db # choose your own db name
 
 # get db endpoint and auth token
 turso db show netcs-db
-db tokens create netcs-db 
+turso db tokens create netcs-db 
 
 # run and push the migrations
 pnpm run db:generate
