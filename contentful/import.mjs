@@ -44,7 +44,11 @@ console.log(`
   • The custom App ${chalk.green("Reading Time")}
     ${chalk.cyan("Install directly from https://app.contentful.com/deeplink?link=apps&id=37bHFoMVInn1gLrv2L1IYl")}
     ${chalk.magenta("Check https://github.com/pauloamgomes/contentful-readingtime-field-app for more info")}
-  
+
+  • The custom App ${chalk.green("Articles Views")}
+    ${chalk.cyan("Install directly from https://app.contentful.com/deeplink?link=apps&id=86QZVBOYM4TmRwMdRT9mq")}
+    ${chalk.magenta("Or build it from ./contentful/articles-views")}
+
   ${chalk.bgYellow(" ONLY PROCEED IF YOU HAVE COMPLETED ALL THE ABOVE STEPS ")}
 
   Ready? Let's go 🚀
