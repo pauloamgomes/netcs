@@ -22,6 +22,7 @@ const options = {
   managementToken,
   contentFile,
   uploadAssets: true,
+  assetsDirectory: path.join(__dirname, "export"),
 };
 
 console.log(`
@@ -37,13 +38,17 @@ console.log(`
   You will need on your Contentful space the following Apps installed:
 
   • The custom App ${chalk.green("Code Editor Field")}
-    ${chalk.cyan("Install directly from https://app.contentful.com/deeplink?link=apps&id=3UX8c2HiTKSfd4OaB66xjk")}
+    ${chalk.cyan("Install directly from https://app.contentful.com/deeplink?link=apps&id=1u2bRLEHlFfFFzUOsSCeA2")}
     ${chalk.magenta("Check https://github.com/pauloamgomes/Contentful-Code-Editor-Field-App for more info")}
 
   • The custom App ${chalk.green("Reading Time")}
-    ${chalk.cyan("Install directly from https://app.contentful.com/deeplink?link=apps&id=3sGbRlxDKppJL1JcuR0LoP")}
+    ${chalk.cyan("Install directly from https://app.contentful.com/deeplink?link=apps&id=37bHFoMVInn1gLrv2L1IYl")}
     ${chalk.magenta("Check https://github.com/pauloamgomes/contentful-readingtime-field-app for more info")}
-  
+
+  • The custom App ${chalk.green("Articles Views")}
+    ${chalk.cyan("Install directly from https://app.contentful.com/deeplink?link=apps&id=86QZVBOYM4TmRwMdRT9mq")}
+    ${chalk.magenta("Or build it from ./contentful/articles-views")}
+
   ${chalk.bgYellow(" ONLY PROCEED IF YOU HAVE COMPLETED ALL THE ABOVE STEPS ")}
 
   Ready? Let's go 🚀

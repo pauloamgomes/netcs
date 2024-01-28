@@ -41,6 +41,7 @@ Project is deployed live at [https://netcs.vercel.app/](https://netcs.vercel.app
 - Tailwind CSS via DaisyUI
 - Nextjs SSR components
 - Contentful Live preview
+- Contentful Dashboard example App for visualizing stats on Articles views counts
 
 ## Requirements
 
@@ -90,7 +91,7 @@ turso db create netcs-db # choose your own db name
 
 # get db endpoint and auth token
 turso db show netcs-db
-db tokens create netcs-db 
+turso db tokens create netcs-db 
 
 # run and push the migrations
 pnpm run db:generate
@@ -112,7 +113,8 @@ The above command will import all example data you can see in this example websi
 
 > **WARNING**  
 You need to have an empty environment without any content models created.
-You need to install the 2 Contentful Apps mentioned when running the import command.
+You need to install 2 Contentful Apps mentioned when running the import command.
+You can optionally install 1 Contentful Apps mentioned when running the import command.
 Please also note that the migration data is using a default Contentful locale en-US, if you want a different locale you'll need to manipulate the exported data by replacing in the migration JSON file all keys containing en-US.
 
 #### Start Local server

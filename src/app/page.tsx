@@ -5,6 +5,9 @@ import { queryHomePage, querySiteSettings } from "~/gql/queries";
 import { contentfulGqlQuery } from "~/lib/contentful";
 import { PageTemplate } from "~/templates";
 
+export const revalidate = parseInt(process.env.NEXT_REVALIDATE_SECONDS || "3600", 10); // 60 minutes
+export const fetchCache = process.env.NODE_ENV === 'production' ? 'force-cache' : 'force-no-store';
+
 export async function generateMetadata(
   _props: any,
   parent: ResolvingMetadata

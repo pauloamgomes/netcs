@@ -2,14 +2,12 @@ import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
 import {
-  queryAllArticles,
   queryBlogArticle,
   queryPage,
   queryProject,
   queryWorkExperience,
 } from "~/gql/queries";
 import { contentfulGqlQuery } from "~/lib/contentful";
-import { getPageUrl } from "~/lib/navigation";
 import {
   ArticlesTemplate,
   ArticleTemplate,
@@ -21,19 +19,13 @@ import {
 } from "~/templates";
 import { BlogArticle, Page, Project, WorkExperience } from "~generated/graphql";
 
+export const revalidate = parseInt(process.env.NEXT_REVALIDATE_SECONDS || "3600", 10); // 60 minutes
+export const fetchCache = process.env.NODE_ENV === 'production' ? 'force-cache' : 'force-no-store';
+
 type PageProps = {
   params: { slug: string[] };
   searchParams: { [key: string]: string | string[] | undefined };
 };
-
-// export async function generateStaticParams() {
-//   const data = await contentfulGqlQuery(queryAllArticles);
-//   const articles = data?.blogArticleCollection?.items || [];
-
-//   return articles?.map((article: BlogArticle) => ({
-//     slug: getPageUrl(article)?.replace(/^\//, "").split("/"),
-//   }));
-// }
 
 export async function generateMetadata(
   { params: { slug } }: PageProps,
