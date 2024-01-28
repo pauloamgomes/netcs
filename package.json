@@ -64,7 +64,7 @@
     "chalk": "^5.3.0",
     "contentful-export": "^7.19.115",
     "contentful-import": "^9.4.32",
-    "daisyui": "^3.9.4",
+    "daisyui": "^4.6.0",
     "drizzle-kit": "^0.19.13",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",

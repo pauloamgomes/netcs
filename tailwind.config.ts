@@ -1,5 +1,9 @@
 import type { Config } from "tailwindcss";
 
+const themes = require("daisyui/src/theming/themes");
+
+themes.light;
+
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -25,7 +29,7 @@ const config: Config = {
     themes: [
       {
         light: {
-          ...require("daisyui/src/theming/themes")["[data-theme=light]"],
+          ...themes.light,
           ".hero-content": {
             "@apply text-neutral": "",
           },
@@ -37,7 +41,7 @@ const config: Config = {
           },
         },
         dark: {
-          ...require("daisyui/src/theming/themes")["[data-theme=dark]"],
+          ...themes.dark,
           ".hero-content": {
             "@apply text-white": "",
           },
