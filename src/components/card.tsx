@@ -89,8 +89,8 @@ Card.Description = function CardDescription({
         height === "sm"
           ? "line-clamp-2"
           : height === "lg"
-          ? "line-clamp-6"
-          : "line-clamp-4"
+            ? "line-clamp-6"
+            : "line-clamp-4"
       )}
     >
       {children}
