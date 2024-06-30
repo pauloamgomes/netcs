@@ -136,8 +136,8 @@ importers:
         specifier: ^7.19.144
         version: 7.19.144(encoding@0.1.13)
       contentful-import:
-        specifier: ^9.4.55
-        version: 9.4.55(eslint-plugin-import@2.29.0(@typescript-eslint/parser@6.10.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.1.1(eslint@8.57.0))
+        specifier: 9.4.54
+        version: 9.4.54(eslint-plugin-import@2.29.0(@typescript-eslint/parser@6.10.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.1.1(eslint@8.57.0))
       daisyui:
         specifier: ^4.11.1
         version: 4.11.1(postcss@8.4.38)
@@ -1992,8 +1992,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  contentful-import@9.4.55:
-    resolution: {integrity: sha512-7EAWv4Tma4j+jJ0MM8t32QCy0ttQLA5RBY3mdzdIurlS3sZYCCeQHh7tyQ7on0RdhETIOAmOvRh6al/TA7iCzA==}
+  contentful-import@9.4.54:
+    resolution: {integrity: sha512-sinbhZoGbkfh4pVPGmNAy5JjBJOA9WX1BjCMCIAjwZQvWZweYCvsCaFZNHDx01qCW765BcYuDvU10Xf0xLQh3w==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -7097,7 +7097,7 @@ snapshots:
       - zen-observable
       - zenObservable
 
-  contentful-import@9.4.55(eslint-plugin-import@2.29.0(@typescript-eslint/parser@6.10.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.1.1(eslint@8.57.0)):
+  contentful-import@9.4.54(eslint-plugin-import@2.29.0(@typescript-eslint/parser@6.10.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.1.1(eslint@8.57.0)):
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
       bluebird: 3.7.2
@@ -7234,7 +7234,7 @@ snapshots:
 
   date-fns@2.30.0:
     dependencies:
-      '@babel/runtime': 7.23.2
+      '@babel/runtime': 7.24.5
 
   date-fns@3.6.0: {}
 
