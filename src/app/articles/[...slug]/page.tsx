@@ -1,3 +1,4 @@
+import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ArticleReadingTime } from "~/components/articles/article-reading-time";
@@ -8,17 +9,69 @@ import { SectionRelatedTopics } from "~/components/articles/section-related-topi
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { richTextEmbeddedBlocks } from "~/components/richtext-embedded-blocks";
+import { queryBlogArticle } from "~/gql/queries";
+import { contentfulGqlQuery } from "~/lib/contentful";
 import { previewProps } from "~/lib/preview";
 import { RichText } from "~/lib/rich-text";
 import { formatDate, slugify } from "~/lib/utils";
-import { BlogArticle, PageHero as IPageHero } from "~generated/graphql";
+import { PageHero as IPageHero } from "~generated/graphql";
 
-export async function ArticleTemplate({ article }: { article?: BlogArticle }) {
+// Ondemand revalidation
+export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+
+type PageProps = {
+  params: { slug: string[] };
+};
+
+export async function generateMetadata(
+  { params: { slug } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const images = [];
+
+  const data = await contentfulGqlQuery(queryBlogArticle, {
+    slug: slug.join("/"),
+  });
+
+  const page = data?.blogArticleCollection.items[0];
+
+  if (!page?.sys.id) {
+    return {};
+  }
+
+  const previousImages: any = (await parent).openGraph?.images || [];
+
+  if (page?.featuredImage?.url) {
+    images.push(page.featuredImage.url);
+  }
+
+  const { seoTitle, seoDescription, seoImage, title, summary } = page;
+
+  if (seoImage?.url) {
+    images.unshift(seoImage.url);
+  }
+
+  return {
+    title: seoTitle || title,
+    description: seoDescription || summary,
+    openGraph: {
+      images: [...images, ...previousImages],
+    },
+  };
+}
+
+export default async function ArticlePage({ params: { slug } }: PageProps) {
+  const data = await contentfulGqlQuery(queryBlogArticle, {
+    slug: slug.join("/"),
+  });
+
+  const article = data?.blogArticleCollection?.items?.[0];
+
   if (!article?.sys.id) {
     return notFound();
   }
 
-  const embeddedBlocks = await richTextEmbeddedBlocks()
+  const embeddedBlocks = await richTextEmbeddedBlocks();
 
   const heroProps = {
     sys: article.sys,

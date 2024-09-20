@@ -1,61 +1,71 @@
 import clsx from "clsx";
-import { gql } from "graphql-request";
+import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import BlocksRenderer from "~/components/blocks-renderer";
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
-import { FragmentAsset } from "~/gql/fragments";
+import { queryPage, queryWorks } from "~/gql/queries";
 import { contentfulGqlQuery } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { getPageUrl } from "~/lib/navigation";
 import { previewProps } from "~/lib/preview";
 import { Maybe, Page, Skills, WorkExperience } from "~generated/graphql";
 
-const queryWorks = gql`
-  ${FragmentAsset}
+// Ondemand revalidation
+export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
 
-  query queryWorks($limit: Int = 100, $preview: Boolean = false) {
-    workExperienceCollection(
-      limit: $limit
-      order: endDate_DESC
-      preview: $preview
-    ) {
-      items {
-        __typename
-        sys {
-          id
-        }
-        companyName
-        role
-        slug
-        summary
-        logo {
-          ...FragmentAsset
-        }
-        startDate
-        endDate
-        currentWork
-        body {
-          json
-        }
-        skillsCollection(limit: 10) {
-          items {
-            sys {
-              id
-            }
-            name
-          }
-        }
-      }
-    }
-  }
-`;
+type PageProps = {
+  params: { slug: string[] };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-export async function WorksTemplate({ page }: { page: Page | undefined }) {
+export async function generateMetadata(
+  { params: { slug } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const images = [];
+
+  const data = await contentfulGqlQuery(queryPage, {
+    slug,
+    template: "Work Experience",
+  });
+
+  const page = data?.pageCollection.items[0] as Page;
+
   if (!page?.sys.id) {
-    return null;
+    return {};
+  }
+
+  const { seoTitle, seoDescription, seoImage, hero } = page;
+
+  const previousImages: any = (await parent).openGraph?.images || [];
+
+  if (seoImage?.url) {
+    images.unshift(seoImage.url);
+  }
+
+  return {
+    title: seoTitle || hero?.title || "",
+    description: seoDescription || hero?.description?.slice(0, 160) || "",
+    openGraph: {
+      images: [...images, ...previousImages],
+    },
+  };
+}
+
+export default async function WorksPage({ params: { slug } }: PageProps) {
+  const pageData = await contentfulGqlQuery(queryPage, {
+    slug,
+    template: "Work Experience",
+  });
+
+  const page = pageData.pageCollection.items[0];
+
+  if (!page?.sys.id) {
+    return notFound();
   }
 
   const data = await contentfulGqlQuery(queryWorks);
@@ -87,10 +97,16 @@ export async function WorksTemplate({ page }: { page: Page | undefined }) {
                   unoptimized
                 />
               </div>
-              <div  {...previewProps({
-                entryId: role.sys.id,
-                fieldId: "role",
-              })} className={clsx("mb-10 p-5", idx % 2 === 0 ? 'timeline-start md:text-end' : 'timeline-end')}>
+              <div
+                {...previewProps({
+                  entryId: role.sys.id,
+                  fieldId: "role",
+                })}
+                className={clsx(
+                  "mb-10 p-5",
+                  idx % 2 === 0 ? "timeline-start md:text-end" : "timeline-end"
+                )}
+              >
                 <div className="font-bold text-xl font-heading">
                   <span>{new Date(role?.startDate).getFullYear()}</span>{" "}
                   <span aria-hidden="true">—</span>{" "}

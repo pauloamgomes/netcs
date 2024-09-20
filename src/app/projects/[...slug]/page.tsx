@@ -1,3 +1,4 @@
+import { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -5,12 +6,65 @@ import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { LinkIcon } from "~/components/icons";
 import { richTextEmbeddedBlocks } from "~/components/richtext-embedded-blocks";
+import { queryProject } from "~/gql/queries";
+import { contentfulGqlQuery } from "~/lib/contentful";
 import { previewProps } from "~/lib/preview";
 import { RichText } from "~/lib/rich-text";
 import { formatDate } from "~/lib/utils";
-import { PageHero as IPageHero, Project } from "~generated/graphql";
+import { PageHero as IPageHero } from "~generated/graphql";
 
-export async function ProjectTemplate({ project }: { project?: Project }) {
+// Ondemand revalidation
+export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+
+type PageProps = {
+  params: { slug: string[] };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata(
+  { params: { slug } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const images = [];
+
+  const data = await contentfulGqlQuery(queryProject, {
+    slug: slug.join("/"),
+  });
+
+  const page = data?.projectCollection.items[0];
+
+  if (!page?.sys.id) {
+    return {};
+  }
+
+  const previousImages: any = (await parent).openGraph?.images || [];
+
+  if (page?.featuredImage?.url) {
+    images.push(page.featuredImage.url);
+  }
+
+  const { seoTitle, seoDescription, seoImage, title, summary } = page;
+
+  if (seoImage?.url) {
+    images.unshift(seoImage.url);
+  }
+
+  return {
+    title: seoTitle || title,
+    description: seoDescription || summary,
+    openGraph: {
+      images: [...images, ...previousImages],
+    },
+  };
+}
+
+export default async function ProjectPage({ params: { slug } }: PageProps) {
+  const data = await contentfulGqlQuery(queryProject, {
+    slug: slug.join("/"),
+  });
+
+  const project = data?.projectCollection?.items?.[0];
+
   if (!project?.sys.id) {
     return notFound();
   }
@@ -25,7 +79,7 @@ export async function ProjectTemplate({ project }: { project?: Project }) {
     variantColor: "Primary",
   } as IPageHero;
 
-  const embeddedBlocks = await richTextEmbeddedBlocks()
+  const embeddedBlocks = await richTextEmbeddedBlocks();
 
   return (
     <main className="flex-auto">
