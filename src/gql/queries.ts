@@ -9,6 +9,7 @@ import {
   FragmentBlocksSkills,
   FragmentBlocksText,
   FragmentBlocksWorkResume,
+  FragmentCategory,
   FragmentCodeSnippet,
   FragmentInfoMessage,
   FragmentMedia,
@@ -22,10 +23,62 @@ export const querySiteSettings = gql`
   query querySiteSettings($preview: Boolean = false) {
     siteSettingsCollection(limit: 1, preview: $preview) {
       items {
+        sys {
+          id
+        }
         siteName
         homepage {
           __typename
           slug
+        }
+      }
+    }
+  }
+`;
+
+export const queryGlobalSiteSettings = gql`
+  ${FragmentNavigationLink}
+  ${FragmentAsset}
+  ${FragmentInfoMessage}
+
+  query queryGlobalSiteSettings($preview: Boolean = false) {
+    siteSettingsCollection(limit: 1, preview: $preview) {
+      items {
+        sys {
+          id
+        }
+        siteName
+        siteLogo {
+          ...FragmentAsset
+        }
+        copyrightLine
+        homepage {
+          __typename
+          slug
+        }
+        seoTitle
+        seoDescription
+        seoImage {
+          ...FragmentAsset
+        }
+        mainMenuItemsCollection(limit: 6) {
+          items {
+            ...FragmentNavigationLink
+          }
+        }
+        socialLinksCollection(limit: 6) {
+          items {
+            ...FragmentNavigationLink
+          }
+        }
+        notificationsCollection(limit: 3) {
+          items {
+            sys {
+              id
+              publishedAt
+            }
+            ...FragmentInfoMessage
+          }
         }
       }
     }
@@ -260,8 +313,16 @@ export const queryPage = gql`
   ${FragmentBlocksText}
   ${FragmentBlocksSkills}
 
-  query queryPage($slug: String, $preview: Boolean = false) {
-    pageCollection(where: { slug: $slug }, limit: 1, preview: $preview) {
+  query queryPage(
+    $slug: String
+    $preview: Boolean = false
+    $template: String = "Page"
+  ) {
+    pageCollection(
+      where: { slug: $slug, template: $template }
+      limit: 1
+      preview: $preview
+    ) {
       items {
         __typename
         sys {
@@ -361,11 +422,162 @@ export const queryHomePage = gql`
   }
 `;
 
+export const queryArticles = gql`
+  ${FragmentAsset}
+  ${FragmentCategory}
+
+  query queryArticles(
+    $limit: Int = 10
+    $skip: Int = 0
+    $order: [BlogArticleOrder] = publishedDate_DESC
+    $topic: String = null
+    $search: String = null
+    $preview: Boolean = false
+  ) {
+    categoryCollection(preview: $preview) {
+      items {
+        sys {
+          id
+        }
+        slug
+        title
+        color
+      }
+    }
+    blogArticleCollection(
+      limit: $limit
+      skip: $skip
+      order: $order
+      preview: $preview
+      where: {
+        AND: [
+          { categories: { slug: $topic } }
+          {
+            OR: [
+              { title_contains: $search }
+              { summary_contains: $search }
+              { seoTitle_contains: $search }
+              { seoDescription_contains: $search }
+            ]
+          }
+        ]
+      }
+    ) {
+      total
+      items {
+        __typename
+        sys {
+          id
+        }
+        title
+        slug
+        publishedDate
+        summary
+        featuredImage {
+          ...FragmentAsset
+        }
+        categoriesCollection(limit: 3) {
+          items {
+            ...FragmentCategory
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const queryAllArticles = gql`
   query queryAllArticles($limit: Int = 1000, $preview: Boolean = false) {
     blogArticleCollection(
       limit: $limit
       order: publishedDate_DESC
+      preview: $preview
+    ) {
+      items {
+        __typename
+        sys {
+          id
+        }
+        slug
+      }
+    }
+  }
+`;
+
+export const queryProjects = gql`
+  ${FragmentAsset}
+
+  query queryProjects($limit: Int = 100, $preview: Boolean = false) {
+    projectCollection(
+      limit: $limit
+      order: publishedDate_DESC
+      preview: $preview
+    ) {
+      items {
+        __typename
+        sys {
+          id
+        }
+        publishedDate
+        title
+        slug
+        summary
+        featuredImage {
+          ...FragmentAsset
+        }
+      }
+    }
+  }
+`;
+
+export const queryWorks = gql`
+  ${FragmentAsset}
+
+  query queryWorks($limit: Int = 100, $preview: Boolean = false) {
+    workExperienceCollection(
+      limit: $limit
+      order: endDate_DESC
+      preview: $preview
+    ) {
+      items {
+        __typename
+        sys {
+          id
+        }
+        companyName
+        role
+        slug
+        summary
+        logo {
+          ...FragmentAsset
+        }
+        startDate
+        endDate
+        currentWork
+        body {
+          json
+        }
+        skillsCollection(limit: 10) {
+          items {
+            sys {
+              id
+            }
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const queryAllPages = gql`
+  query queryAllPages(
+    $slug: String
+    $preview: Boolean = false
+    $template: String = "Page"
+  ) {
+    pageCollection(
+      where: { slug: $slug, template: $template }
       preview: $preview
     ) {
       items {

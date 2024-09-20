@@ -90,7 +90,7 @@ const richTextQuery = gql`
 
 export async function BlockRichText({ block }: { block: BlocksText }) {
   const data = await contentfulGqlQuery(richTextQuery, { id: block.sys.id });
-  const embeddedBlocks = await richTextEmbeddedBlocks()
+  const embeddedBlocks = await richTextEmbeddedBlocks();
 
   return (
     <div

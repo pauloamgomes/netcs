@@ -1,12 +1,13 @@
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
+import BlocksRenderer from "~/components/blocks-renderer";
+import { PageHero } from "~/components/hero/hero";
 import { queryHomePage, querySiteSettings } from "~/gql/queries";
 import { contentfulGqlQuery } from "~/lib/contentful";
-import { PageTemplate } from "~/templates";
 
-export const revalidate = parseInt(process.env.NEXT_REVALIDATE_SECONDS || "3600", 10); // 60 minutes
-export const fetchCache = process.env.NODE_ENV === 'production' ? 'force-cache' : 'force-no-store';
+// Ondemand revalidation
+export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
 
 export async function generateMetadata(
   _props: any,
@@ -19,22 +20,18 @@ export async function generateMetadata(
   const page = data.pageCollection.items[0];
   const { siteName } = siteData.siteSettingsCollection.items[0] || {};
 
-  const title = page?.hero?.title || "";
-  const description = page?.hero?.description?.slice(0, 160) || "";
+  const { seoTitle, seoDescription, seoImage, hero } = page;
 
-  // Use the page's SEO settings if they exist, otherwise use the defaults
-  const { seoTitle, seoDescription, seoImage } = page;
+  const previousImages: any = (await parent).openGraph?.images || [];
 
   const images = [];
   if (seoImage?.url) {
     images.push(seoImage.url);
   }
 
-  const previousImages: any = (await parent).openGraph?.images || [];
-
   return {
-    title: `${seoTitle || title} | ${siteName}`,
-    description: seoDescription || description || "",
+    title: `${seoTitle || hero.title} | ${siteName}`,
+    description: seoDescription || hero?.description.slice(0, 160) || "",
     openGraph: {
       siteName,
       images: [...images, ...previousImages],
@@ -48,9 +45,19 @@ export default async function Home() {
     slug: siteData.siteSettingsCollection.items[0].homepage.slug,
   });
 
-  if (!data?.pageCollection?.items?.[0]?.sys?.id) {
+  const page = data?.pageCollection?.items?.[0];
+
+  if (!page?.sys.id) {
     return notFound();
   }
 
-  return <PageTemplate page={data.pageCollection.items[0]} />;
+  const hero = page?.hero;
+  const body = page?.bodyCollection?.items;
+
+  return (
+    <main className="flex-auto">
+      {hero && <PageHero {...hero} />}
+      <BlocksRenderer blocks={body as any} />
+    </main>
+  );
 }

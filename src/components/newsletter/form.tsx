@@ -1,9 +1,9 @@
 "use client";
 
 import clsx from "clsx";
-import { useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 
+import actionSubmit from "~/actions/newsletter";
 import { BlocksNewsletterSignup, Maybe } from "~generated/graphql";
 
 function SubmitButton() {
@@ -79,20 +79,26 @@ export function FormNewsletterSignup({
 }) {
   const { thankYouMessage = "Thank you", errorMessage = "Error" } = block;
 
-  const [status, setStatus] = useState("idle");
+  const [formState, action] = useFormState(actionSubmit, {
+    status: "idle",
+  });
 
-  const actionSubmit = async (formData: FormData) => {
-    const email = formData.get("email")?.toString();
-    const res = await fetch("/api/newsletter", {
-      method: "POST",
-      body: JSON.stringify({ email }),
-    }).then((res) => res.json());
+  // const [status, setStatus] = useState("idle");
 
-    setStatus(res.status || "error");
-  };
+  // const actionSubmit = async (formData: FormData) => {
+  //   const email = formData.get("email")?.toString();
+  //   const res = await fetch("/api/newsletter", {
+  //     method: "POST",
+  //     body: JSON.stringify({ email }),
+  //   }).then((res) => res.json());
+
+  //   setStatus(res.status || "error");
+  // };
+
+  const { status } = formState;
 
   return (
-    <form action={actionSubmit}>
+    <form action={action}>
       <div className="bg-base-200 p-6 rounded-md">
         <StatusMessage
           status={status}

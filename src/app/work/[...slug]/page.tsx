@@ -1,20 +1,70 @@
+import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { richTextEmbeddedBlocks } from "~/components/richtext-embedded-blocks";
+import { queryWorkExperience } from "~/gql/queries";
+import { contentfulGqlQuery } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { previewProps } from "~/lib/preview";
 import { RichText } from "~/lib/rich-text";
 import { PageHero as IPageHero, WorkExperience } from "~generated/graphql";
 
-export async function WorkTemplate({ work }: { work?: WorkExperience }) {
+// Ondemand revalidation
+export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+
+type PageProps = {
+  params: { slug: string[] };
+};
+
+export async function generateMetadata(
+  { params: { slug } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const images = [];
+
+  const data = await contentfulGqlQuery(queryWorkExperience, {
+    slug: slug.join("/"),
+  });
+
+  const page = data?.workExperienceCollection.items[0];
+
+  if (!page?.sys.id) {
+    return {};
+  }
+
+  const { seoTitle, seoDescription, seoImage, summary, role, companyName } =
+    page;
+
+  const previousImages: any = (await parent).openGraph?.images || [];
+
+  if (seoImage?.url) {
+    images.unshift(seoImage.url);
+  }
+
+  return {
+    title: seoTitle || `${role} - ${companyName}`,
+    description: seoDescription || summary,
+    openGraph: {
+      images: [...images, ...previousImages],
+    },
+  };
+}
+
+export default async function BasicPage({ params: { slug } }: PageProps) {
+  const data = await contentfulGqlQuery(queryWorkExperience, {
+    slug: slug.join("/"),
+  });
+
+  const work = data?.workExperienceCollection?.items?.[0] as WorkExperience;
+
   if (!work?.sys.id) {
     return notFound();
   }
 
-  const embeddedBlocks = await richTextEmbeddedBlocks()
+  const embeddedBlocks = await richTextEmbeddedBlocks();
 
   const startDate = new Date(work?.startDate).getFullYear();
   const endDate = work?.currentWork
