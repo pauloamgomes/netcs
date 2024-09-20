@@ -1,43 +1,70 @@
-import { gql } from "graphql-request";
+import { Metadata, ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
 
 import BlocksRenderer from "~/components/blocks-renderer";
 import { Card } from "~/components/card";
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
-import { FragmentAsset } from "~/gql/fragments";
+import { queryPage, queryProjects } from "~/gql/queries";
 import { contentfulGqlQuery } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { getPageUrl } from "~/lib/navigation";
 import { previewProps } from "~/lib/preview";
 import { Page, Project } from "~generated/graphql";
 
-const queryProjects = gql`
-  ${FragmentAsset}
+// Ondemand revalidation
+export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
 
-  query queryProjects($limit: Int = 100, $preview: Boolean = false) {
-    projectCollection(
-      limit: $limit
-      order: publishedDate_DESC
-      preview: $preview
-    ) {
-      items {
-        __typename
-        sys {
-          id
-        }
-        publishedDate
-        title
-        slug
-        summary
-        featuredImage {
-          ...FragmentAsset
-        }
-      }
-    }
+type PageProps = {
+  params: { slug: string[] };
+};
+
+export async function generateMetadata(
+  { params: { slug } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const images = [];
+
+  const data = await contentfulGqlQuery(queryPage, {
+    slug,
+    template: "Projects",
+  });
+
+  const page = data?.pageCollection.items[0] as Page;
+
+  if (!page?.sys.id) {
+    return {};
   }
-`;
 
-export async function ProjectsTemplate({ page }: { page: Page | undefined }) {
+  const { seoTitle, seoDescription, seoImage, hero } = page;
+
+  const previousImages: any = (await parent).openGraph?.images || [];
+
+  if (seoImage?.url) {
+    images.unshift(seoImage.url);
+  }
+
+  return {
+    title: seoTitle || hero?.title || "",
+    description: seoDescription || hero?.description?.slice(0, 160) || "",
+    openGraph: {
+      images: [...images, ...previousImages],
+    },
+  };
+}
+
+export default async function ProjectsPage({ params: { slug } }: PageProps) {
+  const pageData = await contentfulGqlQuery(queryPage, {
+    slug,
+    template: "Projects",
+  });
+
+  if (!pageData?.pageCollection?.items?.[0]?.sys?.id) {
+    return notFound();
+  }
+
+  const page = pageData.pageCollection.items[0];
+
   if (!page?.sys.id) {
     return null;
   }

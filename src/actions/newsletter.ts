@@ -1,3 +1,5 @@
+"use server";
+
 import { eq, sql } from "drizzle-orm";
 import isbot from "isbot";
 import { headers } from "next/headers";
@@ -14,20 +16,27 @@ const limiter = rateLimiter({
   interval: 60 * 1000,
 });
 
-export async function POST(request: Request) {
-  const { email } = await request.json();
+type FormState = {
+  status: string;
+};
+
+export default async function actionSubmit(
+  _prevState: FormState,
+  formData: FormData
+) {
+  const email = formData.get("email")?.toString();
 
   const headersList = headers();
   const agentHeader = headersList.get("user-agent");
 
   if (!agentHeader || !email) {
-    return Response.json({ status: "error" });
+    return { status: "error" };
   }
 
   const isBot = isbot(agentHeader);
 
   if (isBot) {
-    return Response.json({ status: "success" });
+    return { status: "success" };
   }
 
   try {
@@ -35,7 +44,7 @@ export async function POST(request: Request) {
       ","
     )[0];
 
-    await limiter.check(1, `${ip}-${email}`);
+    await limiter.check(3, `newsletter-${ip}`);
 
     let country = "";
 
@@ -61,8 +70,8 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error(error);
-    return Response.json({ status: "error" });
+    return { status: "error" };
   }
 
-  return Response.json({ status: "success" });
+  return { status: "success" };
 }

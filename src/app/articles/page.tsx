@@ -1,5 +1,6 @@
-import { gql } from "graphql-request";
+import { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { SearchInput } from "~/components/articles/search-input";
 import BlocksRenderer from "~/components/blocks-renderer";
@@ -9,87 +10,73 @@ import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { Pagination } from "~/components/pagination";
 import { Sort } from "~/components/sort";
-import { FragmentAsset, FragmentCategory } from "~/gql/fragments";
+import { queryArticles, queryPage } from "~/gql/queries";
 import { contentfulGqlQuery } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { getPageUrl } from "~/lib/navigation";
 import { previewProps } from "~/lib/preview";
 import { formatDate } from "~/lib/utils";
-import { BlogArticle, Category, Page } from "~generated/graphql";
+import { BlogArticle, Category } from "~generated/graphql";
+
+// Ondemand revalidation
+export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+
+type PageProps = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 const PER_PAGE = 9;
 
-const queryArticles = gql`
-  ${FragmentAsset}
-  ${FragmentCategory}
+export async function generateMetadata(
+  { params: { slug } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const images = [];
 
-  query queryArticles(
-    $limit: Int = 10
-    $skip: Int = 0
-    $order: [BlogArticleOrder] = publishedDate_DESC
-    $topic: String = null
-    $search: String = null
-    $preview: Boolean = false
-  ) {
-    categoryCollection(preview: $preview) {
-      items {
-        sys {
-          id
-        }
-        slug
-        title
-        color
-      }
-    }
-    blogArticleCollection(
-      limit: $limit
-      skip: $skip
-      order: $order
-      preview: $preview
-      where: {
-        AND: [
-          { categories: { slug: $topic } }
-          {
-            OR: [
-              { title_contains: $search }
-              { summary_contains: $search }
-              { seoTitle_contains: $search }
-              { seoDescription_contains: $search }
-            ]
-          }
-        ]
-      }
-    ) {
-      total
-      items {
-        __typename
-        sys {
-          id
-        }
-        title
-        slug
-        publishedDate
-        summary
-        featuredImage {
-          ...FragmentAsset
-        }
-        categoriesCollection(limit: 3) {
-          items {
-            ...FragmentCategory
-          }
-        }
-      }
-    }
+  const data = await contentfulGqlQuery(queryPage, {
+    slug,
+    template: "Articles",
+  });
+
+  const page = data?.pageCollection.items[0];
+
+  if (!page?.sys.id) {
+    return {};
   }
-`;
 
-export async function ArticlesTemplate({
-  page,
+  const { seoTitle, seoDescription, seoImage, hero } = page;
+
+  const previousImages: any = (await parent).openGraph?.images || [];
+
+  if (seoImage?.url) {
+    images.unshift(seoImage.url);
+  }
+
+  return {
+    title: seoTitle || hero?.title || "",
+    description: seoDescription || hero?.description?.slice(0, 160) || "",
+    openGraph: {
+      images: [...images, ...previousImages],
+    },
+  };
+}
+
+export default async function ArticlesPage({
+  params: { slug },
   searchParams,
-}: {
-  page: Page | undefined;
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+}: PageProps) {
+  const pageData = await contentfulGqlQuery(queryPage, {
+    slug,
+    template: "Articles",
+  });
+
+  if (!pageData?.pageCollection?.items?.[0]?.sys?.id) {
+    return notFound();
+  }
+
+  const page = pageData.pageCollection.items[0];
+
   if (!page?.sys.id) {
     return null;
   }

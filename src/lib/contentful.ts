@@ -1,9 +1,8 @@
 "use server";
 
-import { GraphQLClient, Variables } from "graphql-request";
 import { draftMode } from "next/headers";
-import { cache } from "react";
 
+import { compress } from "./compress";
 import { sleep } from "./utils";
 
 const {
@@ -11,63 +10,46 @@ const {
   CONTENTFUL_ENVIRONMENT_ID,
   CONTENTFUL_ACCESS_TOKEN,
   CONTENTFUL_PREVIEW_ACCESS_TOKEN,
-  NEXT_REVALIDATE_SECONDS,
+  NODE_ENV,
 } = process.env;
-
-const revalidate = parseInt(NEXT_REVALIDATE_SECONDS || "600", 10);
 
 const apiUrl = `https://graphql.contentful.com/content/v1/spaces/${CONTENTFUL_SPACE_ID}/environments/${CONTENTFUL_ENVIRONMENT_ID}`;
 
-const defaultClient = new GraphQLClient(apiUrl, {
-  fetch: cache(async (url: any, params: RequestInit | undefined) =>
-    fetch(url, { ...params, next: { revalidate } })
-  ),
-});
+export async function contentfulGqlQuery(
+  query: string,
+  variables = {} as Record<string, unknown>,
+  enforceNoDraft = false
+) {
+  const preview = enforceNoDraft ? false : draftMode().isEnabled;
 
-const previewClient = new GraphQLClient(apiUrl, {
-  fetch: cache(async (url: any, params: RequestInit | undefined) =>
-    fetch(url, { ...params, cache: "no-store" })
-  ),
-});
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${
+        preview ? CONTENTFUL_PREVIEW_ACCESS_TOKEN : CONTENTFUL_ACCESS_TOKEN
+      }`,
+    },
+    body: JSON.stringify({
+      query: compress(query),
+      variables: { ...variables, preview },
+    }),
+    next: { revalidate: preview || NODE_ENV !== "production" ? 0 : false },
+  });
 
-export async function contentfulGqlQuery(query: string, variables?: Variables) {
-  const preview = draftMode().isEnabled;
-
-  const client = preview ? previewClient : defaultClient;
-
-  client.setHeader(
-    "Authorization",
-    `Bearer ${
-      preview ? CONTENTFUL_PREVIEW_ACCESS_TOKEN : CONTENTFUL_ACCESS_TOKEN
-    }`
-  );
-
-  if (preview) {
-    variables = { ...(variables || {}), preview };
+  if (res?.status === 429) {
+    console.info(
+      "[GRAPHQL_ERROR] Rate limit exceeded, retrying in 1 second..."
+    );
+    await sleep(1);
+    return await contentfulGqlQuery(query, variables);
   }
 
-  let data: any = null;
+  const { data, errors } = await res?.json();
 
-  try {
-    data = await client.request(query, variables);
-  } catch (err: any) {
-    if (err?.response?.status === 429) {
-      console.info(
-        "[GRAPHQL_ERROR] Rate limit exceeded, retrying in 1 second..."
-      );
-      await sleep(1);
-      data = await contentfulGqlQuery(query, variables);
-    } else {
-      err?.response?.errors?.forEach((error: any) => {
-        console.error(
-          `[GRAPHQL_ERROR]`,
-          error?.message,
-          error?.locations ?? ""
-        );
-      });
-      data = err?.response?.data;
-    }
-  }
+  errors?.forEach((error: any) => {
+    console.error(`[GRAPHQL_ERROR]`, error?.message, error?.extensions ?? "");
+  });
 
   return data;
 }
