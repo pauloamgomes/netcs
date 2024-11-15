@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Container } from "~/components/container";
 import { GlobeIcon } from "~/components/icons";
 
-export default function NotFound() {
+export default async function NotFound() {
   return (
     <Container className="flex h-full items-center">
       <div className="flex flex-col items-center">

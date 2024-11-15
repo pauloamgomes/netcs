@@ -9,43 +9,46 @@ import { SectionRelatedTopics } from "~/components/articles/section-related-topi
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { richTextEmbeddedBlocks } from "~/components/richtext-embedded-blocks";
-import { queryBlogArticle } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
+import { getBlogArticle, getLatestArticles } from "~/lib/contentful";
 import { previewProps } from "~/lib/preview";
 import { RichText } from "~/lib/rich-text";
 import { formatDate, slugify } from "~/lib/utils";
-import { PageHero as IPageHero } from "~generated/graphql";
-
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+import { BlogArticle, PageHero as IPageHero } from "~generated/graphql";
 
 type PageProps = {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 };
 
+// Only generate article pages during build time for the latest 9 articles found in first page
+export async function generateStaticParams() {
+  const pages = await getLatestArticles({ limit: 9 }, true);
+
+  return pages.map((page: BlogArticle) => ({
+    slug: [page.slug],
+  }));
+}
+
 export async function generateMetadata(
-  { params: { slug } }: PageProps,
+  props: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const images = [];
+  const params = await props.params;
 
-  const data = await contentfulGqlQuery(queryBlogArticle, {
-    slug: slug.join("/"),
-  });
+  const article = await getBlogArticle({ slug: params.slug.join("/") });
 
-  const page = data?.blogArticleCollection.items[0];
-
-  if (!page?.sys.id) {
+  if (!article?.sys.id) {
     return {};
   }
 
   const previousImages: any = (await parent).openGraph?.images || [];
 
-  if (page?.featuredImage?.url) {
-    images.push(page.featuredImage.url);
+  const images = [];
+
+  if (article?.featuredImage?.url) {
+    images.push(article.featuredImage.url);
   }
 
-  const { seoTitle, seoDescription, seoImage, title, summary } = page;
+  const { seoTitle, seoDescription, seoImage, title, summary } = article;
 
   if (seoImage?.url) {
     images.unshift(seoImage.url);
@@ -60,12 +63,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function ArticlePage({ params: { slug } }: PageProps) {
-  const data = await contentfulGqlQuery(queryBlogArticle, {
-    slug: slug.join("/"),
-  });
+export default async function ArticlePage(props: PageProps) {
+  const params = await props.params;
 
-  const article = data?.blogArticleCollection?.items?.[0];
+  const article = await getBlogArticle({ slug: params.slug.join("/") });
 
   if (!article?.sys.id) {
     return notFound();

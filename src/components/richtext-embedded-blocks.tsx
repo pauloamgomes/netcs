@@ -1,5 +1,5 @@
 import { previewProps } from "~/lib/preview";
-import { Accordion as IAccordion,Asset, CodeSnippet, InfoMessage as IInfoMessage, Media } from "~generated/graphql";
+import { Accordion as IAccordion, Asset, CodeSnippet, InfoMessage as IInfoMessage, Media } from "~generated/graphql";
 
 import { Accordion } from "./accordion";
 import { AssetBlock } from "./asset";
@@ -18,7 +18,6 @@ export async function richTextEmbeddedBlocks() {
         })}
       >
         <CodeBlock
-          id={codeSnippet?.sys?.id}
           language={codeSnippet?.snippet?.language}
           snippet={codeSnippet?.snippet?.code}
           caption={codeSnippet?.caption}

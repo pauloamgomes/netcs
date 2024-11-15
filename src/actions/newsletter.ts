@@ -26,7 +26,7 @@ export default async function actionSubmit(
 ) {
   const email = formData.get("email")?.toString();
 
-  const headersList = headers();
+  const headersList = await headers();
   const agentHeader = headersList.get("user-agent");
 
   if (!agentHeader || !email) {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
-import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import { Maybe } from "~generated/graphql";
 
@@ -10,12 +10,10 @@ import { ClipboardDocumentCheckIcon, ClipboardDocumentIcon } from "./icons";
 import { TextWithLinks } from "./text-with-links";
 
 export function CodeBlock({
-  id,
   language,
   snippet,
   caption,
 }: {
-  id: string;
   language?: string;
   snippet?: string;
   caption?: Maybe<string>;
@@ -52,7 +50,7 @@ export function CodeBlock({
         </div>
         <SyntaxHighlighter
           language={language}
-          style={materialDark}
+          style={a11yDark}
           showLineNumbers
           customStyle={{ margin: 0, borderRadius: 5 }}
         >

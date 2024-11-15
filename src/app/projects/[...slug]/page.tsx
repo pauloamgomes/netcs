@@ -6,44 +6,47 @@ import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { LinkIcon } from "~/components/icons";
 import { richTextEmbeddedBlocks } from "~/components/richtext-embedded-blocks";
-import { queryProject } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
+import { getProject, getProjects } from "~/lib/contentful";
 import { previewProps } from "~/lib/preview";
 import { RichText } from "~/lib/rich-text";
 import { formatDate } from "~/lib/utils";
-import { PageHero as IPageHero } from "~generated/graphql";
-
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+import { PageHero as IPageHero, Project } from "~generated/graphql";
 
 type PageProps = {
-  params: { slug: string[] };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string[] }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export async function generateStaticParams() {
+  const pages = await getProjects(true);
+
+  return pages
+    .map((page: Project) => ({
+      slug: [page.slug],
+    }));
+}
+
 export async function generateMetadata(
-  { params: { slug } }: PageProps,
+  props: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const images = [];
+  const params = await props.params;
 
-  const data = await contentfulGqlQuery(queryProject, {
-    slug: slug.join("/"),
-  });
+  const project = await getProject({ slug: params.slug.join("/") });
 
-  const page = data?.projectCollection.items[0];
-
-  if (!page?.sys.id) {
+  if (!project?.sys.id) {
     return {};
   }
 
   const previousImages: any = (await parent).openGraph?.images || [];
 
-  if (page?.featuredImage?.url) {
-    images.push(page.featuredImage.url);
+  const images = [];
+
+  if (project?.featuredImage?.url) {
+    images.push(project.featuredImage.url);
   }
 
-  const { seoTitle, seoDescription, seoImage, title, summary } = page;
+  const { seoTitle, seoDescription, seoImage, title, summary } = project;
 
   if (seoImage?.url) {
     images.unshift(seoImage.url);
@@ -58,12 +61,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function ProjectPage({ params: { slug } }: PageProps) {
-  const data = await contentfulGqlQuery(queryProject, {
-    slug: slug.join("/"),
-  });
+export default async function ProjectPage(props: PageProps) {
+  const params = await props.params;
 
-  const project = data?.projectCollection?.items?.[0];
+  const project = await getProject({ slug: params.slug.join("/") });
 
   if (!project?.sys.id) {
     return notFound();
@@ -84,7 +85,6 @@ export default async function ProjectPage({ params: { slug } }: PageProps) {
   return (
     <main className="flex-auto">
       <PageHero {...heroProps} />
-
       <Container className="bg-primary w-full pb-6">
         <div className="mx-auto max-w-3xl order-first flex items-center justify-between font-semibold text-white">
           <time dateTime={project.publishedDate} className="flex items-center">
@@ -117,7 +117,6 @@ export default async function ProjectPage({ params: { slug } }: PageProps) {
           </div>
         </div>
       </Container>
-
       <Container className="mt-12 mb-24">
         <div
           {...previewProps({

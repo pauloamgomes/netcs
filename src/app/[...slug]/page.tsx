@@ -3,49 +3,44 @@ import { notFound } from "next/navigation";
 
 import BlocksRenderer from "~/components/blocks-renderer";
 import { PageHero } from "~/components/hero/hero";
-import { queryAllPages, queryPage } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
-import { Page } from "~generated/graphql";
-
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+import { getAllPages, getPage, getSiteGlobalSettings } from "~/lib/contentful";
 
 type PageProps = {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 };
 
 export async function generateStaticParams() {
-  const data = await contentfulGqlQuery(
-    queryAllPages,
-    { template: "Page" },
-    true
-  );
+  const siteData = await getSiteGlobalSettings(true);
+  const pages = await getAllPages(true);
 
-  return data?.pageCollection.items.map(({ slug }: { slug: string }) => ({
-    slug: [slug],
-  }));
+  return pages
+    ?.filter(
+      (page) =>
+        // Do not build homepage as it's already done
+        page.slug !== siteData.homepage?.slug
+    )
+    .map((page) => ({
+      slug: [page.slug],
+    }));
 }
 
 export async function generateMetadata(
-  { params: { slug } }: PageProps,
+  props: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const images = [];
+  const params = await props.params;
 
-  const data = await contentfulGqlQuery(queryPage, {
-    slug: slug.join("/"),
-    template: "Page",
-  });
+  const page = await getPage({ slug: params.slug.join("/"), template: "Page" });
 
-  const page = data?.pageCollection.items[0] as Page;
-
-  if (!page?.sys.id) {
+  if (!page?.sys) {
     return {};
   }
 
   const { seoTitle, seoDescription, seoImage, hero } = page;
 
   const previousImages: any = (await parent).openGraph?.images || [];
+
+  const images = [];
 
   if (seoImage?.url) {
     images.unshift(seoImage.url);
@@ -60,13 +55,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function BasicPage({ params: { slug } }: PageProps) {
-  const data = await contentfulGqlQuery(queryPage, {
-    slug: slug.join("/"),
-    template: "Page",
-  });
+export default async function BasicPage(props: PageProps) {
+  const params = await props.params;
 
-  const page = data.pageCollection.items[0];
+  const page = await getPage({ slug: params.slug.join("/"), template: "Page" });
 
   if (!page?.sys.id) {
     return notFound();
@@ -75,7 +67,10 @@ export default async function BasicPage({ params: { slug } }: PageProps) {
   return (
     <main className="flex-auto">
       {page.hero && <PageHero {...page.hero} />}
-      <BlocksRenderer blocks={page?.bodyCollection?.items as any} />
+      <BlocksRenderer
+        id={page.sys.id}
+        blocks={page?.bodyCollection?.items as any}
+      />
     </main>
   );
 }

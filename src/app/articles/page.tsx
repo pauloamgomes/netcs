@@ -10,36 +10,27 @@ import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { Pagination } from "~/components/pagination";
 import { Sort } from "~/components/sort";
-import { queryArticles, queryPage } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
+import { getArticles, getPage } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { getPageUrl } from "~/lib/navigation";
 import { previewProps } from "~/lib/preview";
 import { formatDate } from "~/lib/utils";
-import { BlogArticle, Category } from "~generated/graphql";
-
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+import { Category } from "~generated/graphql";
 
 type PageProps = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 const PER_PAGE = 9;
 
 export async function generateMetadata(
-  { params: { slug } }: PageProps,
+  props: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const images = [];
+  const params = await props.params;
 
-  const data = await contentfulGqlQuery(queryPage, {
-    slug,
-    template: "Articles",
-  });
-
-  const page = data?.pageCollection.items[0];
+  const page = await getPage({ slug: params.slug, template: "Articles" });
 
   if (!page?.sys.id) {
     return {};
@@ -48,6 +39,8 @@ export async function generateMetadata(
   const { seoTitle, seoDescription, seoImage, hero } = page;
 
   const previousImages: any = (await parent).openGraph?.images || [];
+
+  const images = [];
 
   if (seoImage?.url) {
     images.unshift(seoImage.url);
@@ -62,23 +55,14 @@ export async function generateMetadata(
   };
 }
 
-export default async function ArticlesPage({
-  params: { slug },
-  searchParams,
-}: PageProps) {
-  const pageData = await contentfulGqlQuery(queryPage, {
-    slug,
-    template: "Articles",
-  });
+export default async function ArticlesPage(props: PageProps) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
 
-  if (!pageData?.pageCollection?.items?.[0]?.sys?.id) {
-    return notFound();
-  }
-
-  const page = pageData.pageCollection.items[0];
+  const page = await getPage({ slug: params.slug, template: "Articles" });
 
   if (!page?.sys.id) {
-    return null;
+    return notFound();
   }
 
   const skip =
@@ -90,17 +74,13 @@ export default async function ArticlesPage({
   const search = (searchParams?.search as string) || null;
   const topic = (searchParams?.topic as string) || null;
 
-  const data = await contentfulGqlQuery(queryArticles, {
+  const { categories, articles, totalArticles } = await getArticles({
     limit: PER_PAGE,
     skip,
     order: `publishedDate_${sort}`,
     topic,
     search,
   });
-
-  const categories = data?.categoryCollection?.items || [];
-  const articles = data?.blogArticleCollection?.items || [];
-  const totalArticles = data?.blogArticleCollection?.total || 0;
 
   const hero = page?.hero;
   const body = page?.bodyCollection?.items;
@@ -110,7 +90,7 @@ export default async function ArticlesPage({
     ? parseInt(searchParams.page as string)
     : 1;
 
-  const category = categories.find(({ slug }: Category) => slug === topic);
+  const category = categories.find(({ slug }) => slug === topic);
 
   let title = `${totalArticles} articles found`;
   if (category) {
@@ -146,7 +126,7 @@ export default async function ArticlesPage({
         </div>
 
         <ul className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 z-0">
-          {articles.map((article: BlogArticle) => (
+          {articles.map((article) => (
             <Card
               as="li"
               key={article.sys.id}
@@ -186,7 +166,7 @@ export default async function ArticlesPage({
         </div>
       </Container>
 
-      <BlocksRenderer blocks={body as any} />
+      <BlocksRenderer id={page.sys.id} blocks={body as any} />
     </main>
   );
 }
