@@ -16,15 +16,13 @@ const limiter = rateLimiter({
   interval: 60 * 1000,
 });
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(_request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   if (!pageViewsEnabled) {
     return Response.json({ hit: false });
   }
 
-  const headersList = headers();
+  const headersList = await headers();
   const referer = headersList.get("referer");
   const agentHeader = headersList.get("user-agent");
 

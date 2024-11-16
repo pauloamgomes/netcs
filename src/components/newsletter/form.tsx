@@ -1,7 +1,8 @@
 "use client";
 
 import clsx from "clsx";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 import actionSubmit from "~/actions/newsletter";
 import { BlocksNewsletterSignup, Maybe } from "~generated/graphql";
@@ -79,21 +80,9 @@ export function FormNewsletterSignup({
 }) {
   const { thankYouMessage = "Thank you", errorMessage = "Error" } = block;
 
-  const [formState, action] = useFormState(actionSubmit, {
+  const [formState, action] = useActionState(actionSubmit, {
     status: "idle",
   });
-
-  // const [status, setStatus] = useState("idle");
-
-  // const actionSubmit = async (formData: FormData) => {
-  //   const email = formData.get("email")?.toString();
-  //   const res = await fetch("/api/newsletter", {
-  //     method: "POST",
-  //     body: JSON.stringify({ email }),
-  //   }).then((res) => res.json());
-
-  //   setStatus(res.status || "error");
-  // };
 
   const { status } = formState;
 

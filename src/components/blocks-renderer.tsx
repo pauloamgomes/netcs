@@ -1,3 +1,6 @@
+import type { JSX } from "react";
+
+import { previewProps } from "~/lib/preview";
 import {
   BlocksNewsletterSignup,
   BlocksRecentArticles,
@@ -22,6 +25,7 @@ const Blocks: Record<string, (__0: any) => Promise<JSX.Element>> = {
 };
 
 interface IBlocksSection {
+  id: string;
   blocks?:
     | BlocksRecentArticles
     | BlocksWorkResume
@@ -30,7 +34,7 @@ interface IBlocksSection {
     | undefined;
 }
 
-export default async function BlocksRenderer({ blocks }: IBlocksSection) {
+export default async function BlocksRenderer({ id, blocks }: IBlocksSection) {
   if (!blocks) {
     return null;
   }
@@ -51,5 +55,14 @@ export default async function BlocksRenderer({ blocks }: IBlocksSection) {
     }
   }
 
-  return <>{elements}</>;
+  return (
+    <div
+      {...await previewProps({
+        entryId: id,
+        fieldId: "body",
+      })}
+    >
+      {elements}
+    </div>
+  );
 }

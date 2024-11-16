@@ -15,7 +15,7 @@ const contentTypes: Record<string, string> = {
 };
 
 export async function POST(request: NextRequest) {
-  const headersList = headers();
+  const headersList = await headers();
   const secret = headersList.get("secret");
 
   const { contentType = "", slug, global = false } = await request.json();

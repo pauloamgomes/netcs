@@ -12,7 +12,12 @@ import { ReactNode } from "react";
 import { HeadingLink } from "~/components/heading-link";
 
 import { getPageUrl } from "./navigation";
-import { IRichText } from "./types";
+
+interface IRichText {
+  document?: any;
+  links?: any;
+  blocks?: Record<string, any>;
+}
 
 interface INodeWithSlug extends Node {
   data: {

@@ -2,13 +2,13 @@
 
 ## Why?
 
-After so much time working with Contentful and Next, I never found a single consistent way of starting a project,  
-and all starters that tried have their own caveats, some are too basic without touching the real problems like handling GraphQL query complexity limits or are too strict.  
-I'm not saying this starter is better as there are many ways to accomplish the same thing when building with these technologies.  
+After so much time working with Contentful and Next, I never found a single consistent way of starting a project,
+and all starters that tried have their own caveats, some are too basic without touching the real problems like handling GraphQL query complexity limits or are too strict.
+I'm not saying this starter is better as there are many ways to accomplish the same thing when building with these technologies.
 Anyway, it was a lot of fun building it, exploring the nice features of React SSR inside Next.js, and playing with Contentful content modeling capabilities.
 
-> 🚨 **WARNING** 🚨  
-This project is the culmination of my own experimentations with Next.js and Contentful and it may not be suitable for your needs.  
+> 🚨 **WARNING** 🚨
+This project is the culmination of my own experimentations with Next.js and Contentful and it may not be suitable for your needs.
 All contents present in Contentful are fake, mostly generated using AI tools like ChatGPT and DALL-E.
 
 ## Demo
@@ -21,13 +21,13 @@ Project is deployed live at [https://netcs.vercel.app/](https://netcs.vercel.app
 
 ## Tech Stack
 
-- ⚡️ [Next.js 14](https://nextjs.org/blog/next-14) with [App router](https://nextjs.org/docs/app)
-- ⚛️ [React 18](https://react.dev/blog/2022/03/29/react-v18)
+- ⚡️ [Next.js 15](https://nextjs.org/blog/next-15) with [App router](https://nextjs.org/docs/app)
+- ⚛️ [React 19](https://react.dev/blog/2024/04/25/react-19)
 - ✨ [TypeScript](https://www.typescriptlang.org)
 - 💨 [TailwindCSS](https://tailwindcss.com) + 🌻 [DaisyUI](https://daisyui.com)
 - 🌞 [Contentful Headless CMS](https://www.contentful.com)
 - 🗄️ [Turso DB](https://turso.tech)
-- 👷 Code on Github under the MIT License. 
+- 👷 Code on Github under the MIT License.
 - 🌩️ [Hosted on Vercel](https://vercel.com) but be free to use a compatible hosting solution that you prefer
 - 📦 [Code Editor Field App for Contentful](https://github.com/pauloamgomes/Contentful-Code-Editor-Field-App)
 - 📦 [Readingtime App for Contentful](https://github.com/pauloamgomes/contentful-readingtime-field-app)
@@ -91,7 +91,7 @@ turso db create netcs-db # choose your own db name
 
 # get db endpoint and auth token
 turso db show netcs-db
-turso db tokens create netcs-db 
+turso db tokens create netcs-db
 
 # run and push the migrations
 pnpm run db:generate
@@ -111,7 +111,7 @@ pnpm run contentful:import
 
 The above command will import all example data you can see in this example website in your space.
 
-> **WARNING**  
+> **WARNING**
 You need to have an empty environment without any content models created.
 You need to install 2 Contentful Apps mentioned when running the import command.
 You can optionally install 1 Contentful Apps mentioned when running the import command.

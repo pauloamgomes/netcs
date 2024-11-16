@@ -7,33 +7,29 @@ import { notFound } from "next/navigation";
 import BlocksRenderer from "~/components/blocks-renderer";
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
-import { queryPage, queryWorks } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
+import { getPage, getWorks } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { getPageUrl } from "~/lib/navigation";
 import { previewProps } from "~/lib/preview";
-import { Maybe, Page, Skills, WorkExperience } from "~generated/graphql";
-
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+import { Maybe, Skills, WorkExperience } from "~generated/graphql";
 
 type PageProps = {
-  params: { slug: string[] };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export const dynamic = "force-static";
+
 export async function generateMetadata(
-  { params: { slug } }: PageProps,
+  props: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const images = [];
+  const params = await props.params;
 
-  const data = await contentfulGqlQuery(queryPage, {
-    slug,
+  const page = await getPage({
+    slug: params.slug,
     template: "Work Experience",
   });
-
-  const page = data?.pageCollection.items[0] as Page;
 
   if (!page?.sys.id) {
     return {};
@@ -42,6 +38,8 @@ export async function generateMetadata(
   const { seoTitle, seoDescription, seoImage, hero } = page;
 
   const previousImages: any = (await parent).openGraph?.images || [];
+
+  const images = [];
 
   if (seoImage?.url) {
     images.unshift(seoImage.url);
@@ -56,20 +54,19 @@ export async function generateMetadata(
   };
 }
 
-export default async function WorksPage({ params: { slug } }: PageProps) {
-  const pageData = await contentfulGqlQuery(queryPage, {
-    slug,
+export default async function WorksPage(props: PageProps) {
+  const params = await props.params;
+
+  const page = await getPage({
+    slug: params.slug,
     template: "Work Experience",
   });
-
-  const page = pageData.pageCollection.items[0];
 
   if (!page?.sys.id) {
     return notFound();
   }
 
-  const data = await contentfulGqlQuery(queryWorks);
-  const roles = data?.workExperienceCollection?.items || [];
+  const roles = await getWorks();
 
   const hero = page?.hero;
   const body = page?.bodyCollection?.items;
@@ -146,7 +143,7 @@ export default async function WorksPage({ params: { slug } }: PageProps) {
         </ul>
       </Container>
 
-      <BlocksRenderer blocks={body as any} />
+      <BlocksRenderer id={page.sys.id} blocks={body as any} />
     </main>
   );
 }

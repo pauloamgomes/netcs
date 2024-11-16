@@ -2,7 +2,7 @@ import { ContentfulLivePreview } from "@contentful/live-preview";
 
 ContentfulLivePreview.init({
   locale: "en-US",
-  debugMode: true,
+  debugMode: false,
   enableInspectorMode: true,
   enableLiveUpdates: true,
 });

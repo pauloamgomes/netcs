@@ -12,7 +12,7 @@ export function Notifications({ items }: { items?: InfoMessage[] }) {
   const [value, setValue] = useLocalStorage("notifications", [] as string[]);
 
   useEffect(() => {
-    let timer = window.setTimeout(() => setLoaded(true), 1000);
+    let timer = window.setTimeout(() => setLoaded(true), 0);
 
     return () => clearTimeout(timer);
   }, []);

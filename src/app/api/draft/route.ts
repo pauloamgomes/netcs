@@ -10,13 +10,13 @@ export async function GET(request: Request) {
     return new Response("Invalid token", { status: 401 });
   }
 
-  draftMode().enable();
+  (await draftMode()).enable();
 
   // Override cookie header for draft mode for usage in live-preview
   // https://github.com/vercel/next.js/issues/49927
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const cookie = cookieStore.get("__prerender_bypass")!;
-  cookies().set({
+  (await cookies()).set({
     name: "__prerender_bypass",
     value: cookie?.value,
     httpOnly: true,
