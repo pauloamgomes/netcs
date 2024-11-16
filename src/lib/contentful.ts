@@ -113,7 +113,7 @@ export async function getLatestArticles(
     queryAllArticles,
     {
       limit,
-      order: "order: publishedDate_DESC",
+      order: "publishedDate_DESC",
     },
     enforceNoDraft
   );
