@@ -10,20 +10,20 @@ import { DraftModeMessage } from "~/components/draft-mode-message";
 import { Footer } from "~/components/footer";
 import { Header } from "~/components/header";
 import { Notifications } from "~/components/notifications";
-import { queryGlobalSiteSettings } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
+import { getSiteGlobalSettings } from "~/lib/contentful";
 import { themes } from "~/lib/themes";
+import { InfoMessage } from "~generated/graphql";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
-
 export async function generateMetadata(): Promise<Metadata> {
-  const siteData = await contentfulGqlQuery(queryGlobalSiteSettings);
+  const siteData = await getSiteGlobalSettings();
 
-  const { siteName, seoTitle, seoDescription, seoImage } =
-    siteData?.siteSettingsCollection?.items?.[0] || {};
+  if (!siteData?.siteName) {
+    return {};
+  }
+
+  const { siteName, seoTitle, seoDescription, seoImage } = siteData;
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL!),
@@ -53,10 +53,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const siteData = await contentfulGqlQuery(queryGlobalSiteSettings);
-  const site = siteData?.siteSettingsCollection?.items?.[0];
+  const site = await getSiteGlobalSettings();
 
-  const themeCookie = cookies().get("theme");
+  const themeCookie = (await cookies()).get("theme");
+  const isDraftMode = (await draftMode()).isEnabled;
+
   const currentTheme = themeCookie ? themeCookie.value : themes[0];
 
   return (
@@ -69,6 +70,7 @@ export default async function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
+
       <body className={clsx(inter.className, "flex flex-col h-full")}>
         <Header site={site} />
 
@@ -76,9 +78,11 @@ export default async function RootLayout({
 
         <Footer site={site} />
 
-        <Notifications items={site.notificationsCollection?.items} />
+        <Notifications
+          items={site.notificationsCollection?.items as InfoMessage[]}
+        />
 
-        {draftMode().isEnabled && (
+        {isDraftMode && (
           <>
             <DraftModeMessage />
             <Script src="/live-preview.mjs" />

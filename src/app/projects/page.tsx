@@ -5,38 +5,33 @@ import BlocksRenderer from "~/components/blocks-renderer";
 import { Card } from "~/components/card";
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
-import { queryPage, queryProjects } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
+import { getPage, getProjects } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { getPageUrl } from "~/lib/navigation";
 import { previewProps } from "~/lib/preview";
-import { Page, Project } from "~generated/graphql";
-
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+import { Project } from "~generated/graphql";
 
 type PageProps = {
-  params: { slug: string[] };
+  params: Promise<{ slug: string }>;
 };
 
+export const dynamic = "force-static";
+
 export async function generateMetadata(
-  { params: { slug } }: PageProps,
+  props: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const images = [];
+  const params = await props.params;
 
-  const data = await contentfulGqlQuery(queryPage, {
-    slug,
-    template: "Projects",
-  });
-
-  const page = data?.pageCollection.items[0] as Page;
+  const page = await getPage({ slug: params.slug, template: "Projects" });
 
   if (!page?.sys.id) {
     return {};
   }
 
   const { seoTitle, seoDescription, seoImage, hero } = page;
+
+  const images = [];
 
   const previousImages: any = (await parent).openGraph?.images || [];
 
@@ -53,24 +48,16 @@ export async function generateMetadata(
   };
 }
 
-export default async function ProjectsPage({ params: { slug } }: PageProps) {
-  const pageData = await contentfulGqlQuery(queryPage, {
-    slug,
-    template: "Projects",
-  });
+export default async function ProjectsPage(props: PageProps) {
+  const params = await props.params;
 
-  if (!pageData?.pageCollection?.items?.[0]?.sys?.id) {
+  const page = await getPage({ slug: params.slug, template: "Projects" });
+
+  if (!page?.sys.id) {
     return notFound();
   }
 
-  const page = pageData.pageCollection.items[0];
-
-  if (!page?.sys.id) {
-    return null;
-  }
-
-  const data = await contentfulGqlQuery(queryProjects);
-  const projects = data?.projectCollection?.items || [];
+  const projects = await getProjects();
 
   const hero = page?.hero;
   const body = page?.bodyCollection?.items;
@@ -117,7 +104,7 @@ export default async function ProjectsPage({ params: { slug } }: PageProps) {
         </ul>
       </Container>
 
-      <BlocksRenderer blocks={body as any} />
+      <BlocksRenderer id={page.sys.id} blocks={body as any} />
     </main>
   );
 }

@@ -1,12 +1,18 @@
 "use client";
 
-import "@contentful/live-preview/style.css";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function DraftModeMessage() {
   const pathname = usePathname();
+  const [isCtflPreview, setIsCtflPreview] = useState(true);
+
+  useEffect(() => {
+    if (!window.location.ancestorOrigins?.[0]?.includes("contentful.com")) {
+      setIsCtflPreview(false);
+    }
+  }, []);
 
   const handleDisableDraft = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -15,6 +21,10 @@ export function DraftModeMessage() {
 
     window.location.reload();
   };
+
+  if (isCtflPreview) {
+    return null;
+  }
 
   return (
     <div className="toast toast-start z-20">

@@ -103,7 +103,7 @@ export async function BlockRichText({ block }: { block: BlocksText }) {
         <div
           {...previewProps({
             entryId: block.sys.id,
-            fieldId: "cta",
+            fieldId: "text",
           })}
           className="prose prose-lg max-w-none prose-table:text-md"
         >

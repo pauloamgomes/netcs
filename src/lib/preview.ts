@@ -1,5 +1,4 @@
 import { ContentfulLivePreview } from "@contentful/live-preview";
-import { draftMode } from "next/headers";
 
 export function previewProps({
   entryId,
@@ -10,9 +9,7 @@ export function previewProps({
   fieldId?: string;
   locale?: string;
 }) {
-  const enabled = draftMode().isEnabled;
-
-  if (!entryId || !fieldId || !enabled) {
+  if (!entryId || !fieldId) {
     return {};
   }
 

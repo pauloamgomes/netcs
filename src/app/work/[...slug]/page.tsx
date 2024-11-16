@@ -5,40 +5,43 @@ import { notFound } from "next/navigation";
 import { Container } from "~/components/container";
 import { PageHero } from "~/components/hero/hero";
 import { richTextEmbeddedBlocks } from "~/components/richtext-embedded-blocks";
-import { queryWorkExperience } from "~/gql/queries";
-import { contentfulGqlQuery } from "~/lib/contentful";
+import { getWork, getWorks } from "~/lib/contentful";
 import { contentfulImgUrl } from "~/lib/image";
 import { previewProps } from "~/lib/preview";
 import { RichText } from "~/lib/rich-text";
-import { PageHero as IPageHero, WorkExperience } from "~generated/graphql";
-
-// Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+import { PageHero as IPageHero, Skills, WorkExperience } from "~generated/graphql";
 
 type PageProps = {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 };
 
+export async function generateStaticParams() {
+  const pages = await getWorks(true);
+
+  return pages
+    .map((page: WorkExperience) => ({
+      slug: [page.slug],
+    }));
+}
+
 export async function generateMetadata(
-  { params: { slug } }: PageProps,
+  props: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const images = [];
+  const params = await props.params;
 
-  const data = await contentfulGqlQuery(queryWorkExperience, {
-    slug: slug.join("/"),
-  });
+  const work = await getWork({ slug: params.slug.join("/") })
 
-  const page = data?.workExperienceCollection.items[0];
-
-  if (!page?.sys.id) {
+  if (!work?.sys.id) {
     return {};
   }
 
   const { seoTitle, seoDescription, seoImage, summary, role, companyName } =
-    page;
+    work;
 
   const previousImages: any = (await parent).openGraph?.images || [];
+
+  const images = [];
 
   if (seoImage?.url) {
     images.unshift(seoImage.url);
@@ -53,12 +56,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function BasicPage({ params: { slug } }: PageProps) {
-  const data = await contentfulGqlQuery(queryWorkExperience, {
-    slug: slug.join("/"),
-  });
+export default async function BasicPage(props: PageProps) {
+  const params = await props.params;
 
-  const work = data?.workExperienceCollection?.items?.[0] as WorkExperience;
+  const work = await getWork({ slug: params.slug.join("/") })
 
   if (!work?.sys.id) {
     return notFound();
@@ -81,7 +82,7 @@ export default async function BasicPage({ params: { slug } }: PageProps) {
     variantColor: "Dark",
   } as IPageHero;
 
-  const skills = work?.skillsCollection?.items?.filter((item) => !!item) || [];
+  const skills: Skills[] = work?.skillsCollection?.items?.filter((item: Skills) => !!item) || [];
 
   return (
     <main className="flex-auto">

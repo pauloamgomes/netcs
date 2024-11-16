@@ -7,7 +7,7 @@ import { queryHomePage, querySiteSettings } from "~/gql/queries";
 import { contentfulGqlQuery } from "~/lib/contentful";
 
 // Ondemand revalidation
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+export const dynamic = "force-static";
 
 export async function generateMetadata(
   _props: any,
@@ -57,7 +57,7 @@ export default async function Home() {
   return (
     <main className="flex-auto">
       {hero && <PageHero {...hero} />}
-      <BlocksRenderer blocks={body as any} />
+      <BlocksRenderer id={page.sys.id} blocks={body as any} />
     </main>
   );
 }
