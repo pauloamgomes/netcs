@@ -1,5 +1,6 @@
 import "./globals.css";
 
+import { Analytics } from '@vercel/analytics/react';
 import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -88,6 +89,8 @@ export default async function RootLayout({
             <Script src="/live-preview.mjs" />
           </>
         )}
+
+        <Analytics />
       </body>
     </html>
   );
