@@ -20,11 +20,11 @@
     "contentful:export": "node ./contentful/export.mjs"
   },
   "dependencies": {
-    "@contentful/live-preview": "^4.5.14",
-    "@contentful/rich-text-react-renderer": "^15.22.11",
-    "@contentful/rich-text-types": "^16.8.5",
+    "@contentful/live-preview": "^4.6.1",
+    "@contentful/rich-text-react-renderer": "^16.0.1",
+    "@contentful/rich-text-types": "^17.0.0",
     "@graphql-codegen/cli": "^5.0.3",
-    "@graphql-codegen/client-preset": "^4.5.0",
+    "@graphql-codegen/client-preset": "^4.5.1",
     "@graphql-codegen/typescript-graphql-request": "^6.2.0",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@libsql/client": "^0.3.6",
@@ -34,7 +34,7 @@
     "@types/ua-parser-js": "^0.7.39",
     "assert": "^2.1.0",
     "clsx": "^2.1.1",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "drizzle-orm": "^0.28.6",
     "encoding": "^0.1.13",
     "feed": "^4.2.2",
@@ -42,46 +42,40 @@
     "graphql-request": "^6.1.0",
     "isbot": "^3.8.0",
     "lru-cache-ext": "^4.1.1",
-    "next": "^15.0.3",
+    "next": "^15.1.0",
     "node-ipinfo": "^3.5.5",
-    "react": "19.0.0-rc-fb9a90fa48-20240614",
-    "react-dom": "19.0.0-rc-fb9a90fa48-20240614",
-    "react-medium-image-zoom": "^5.2.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-medium-image-zoom": "^5.2.12",
     "react-player": "^2.16.0",
     "react-syntax-highlighter": "^15.6.1",
     "sharp": "^0.32.6",
     "ua-parser-js": "2.0.0-beta.2",
     "usehooks-ts": "^2.16.0",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@inquirer/prompts": "^3.3.2",
-    "@types/node": "^20.17.6",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+    "@types/node": "^20.17.10",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "@types/react-syntax-highlighter": "^15.5.13",
     "autoprefixer": "^10.4.20",
     "better-sqlite3": "^9.6.0",
     "chalk": "^5.3.0",
-    "contentful-export": "^7.19.163",
+    "contentful-export": "^7.21.5",
     "contentful-import": "9.4.54",
-    "daisyui": "^4.12.14",
+    "daisyui": "^4.12.21",
     "drizzle-kit": "^0.19.13",
     "eslint": "^8.57.1",
     "eslint-config-next": "15.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
     "vite": "^4.5.5"
   },
   "volta": {
     "node": "20.9.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "npm:types-react@19.0.0-rc.1",
-      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
-    }
   }
 }
