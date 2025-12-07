@@ -39,7 +39,6 @@ export function WithBackgroundImageHero({
             alt={image.title || ""}
             fill
             priority
-            quality={60}
             sizes={"100vw"}
           />
         )}

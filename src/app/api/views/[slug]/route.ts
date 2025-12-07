@@ -6,6 +6,7 @@ import { UAParser } from "ua-parser-js";
 
 import { db } from "~/lib/db";
 import rateLimiter from "~/lib/rate-limit";
+import { extractClientIp } from "~/lib/request";
 import { articleViewsTable } from "~/models/schema";
 import { ArticleViewsSchema } from "~/models/validation";
 
@@ -18,7 +19,7 @@ const limiter = rateLimiter({
 
 export async function GET(_request: Request, props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  if (!pageViewsEnabled) {
+  if (!pageViewsEnabled || !db) {
     return Response.json({ hit: false });
   }
 
@@ -36,7 +37,7 @@ export async function GET(_request: Request, props: { params: Promise<{ slug: st
     return Response.json({ hit: false });
   }
 
-  const ip = (headersList.get("x-forwarded-for") ?? "127.0.0.1").split(",")[0];
+  const ip = extractClientIp(headersList) ?? "127.0.0.1";
 
   try {
     await limiter.check(1, `${ip}-${params.slug}`);

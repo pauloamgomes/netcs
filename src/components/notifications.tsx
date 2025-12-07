@@ -24,10 +24,10 @@ export function Notifications({ items }: { items?: InfoMessage[] }) {
   return (
     <div className="toast toast-end z-10 text-xs">
       {items
-        .filter(
+        ?.filter(
           (item) => !value.includes(`${item?.sys.id}_${item?.sys.publishedAt}`)
         )
-        .map((item) => (
+        ?.map((item) => (
           <div
             key={`${item?.sys.id}_${item?.sys.publishedAt}`}
             className={clsx(

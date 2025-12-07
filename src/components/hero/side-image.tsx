@@ -83,7 +83,6 @@ export async function WithSideImageHero({
                 imageMask === "triangle" && "mask mask-triangle"
               )}
               priority
-              quality={60}
             />
           </figure>
         ) : null}

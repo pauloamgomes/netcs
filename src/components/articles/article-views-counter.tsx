@@ -14,7 +14,7 @@ export async function ArticlePageViewCounter({
 }: {
   slug?: Maybe<string>;
 }) {
-  if (!pageViewsEnabled || !slug) {
+  if (!pageViewsEnabled || !db || !slug) {
     return null;
   }
 

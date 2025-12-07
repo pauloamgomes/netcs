@@ -7,6 +7,7 @@ import IPinfoWrapper from "node-ipinfo";
 
 import { db } from "~/lib/db";
 import rateLimiter from "~/lib/rate-limit";
+import { extractClientIp } from "~/lib/request";
 import { newsletterSignupsTable } from "~/models/schema";
 import { NewsletterSignupsSchema } from "~/models/validation";
 
@@ -40,9 +41,7 @@ export default async function actionSubmit(
   }
 
   try {
-    const ip = (headersList.get("x-forwarded-for") ?? "127.0.0.1").split(
-      ","
-    )[0];
+    const ip = extractClientIp(headersList) ?? "127.0.0.1";
 
     await limiter.check(3, `newsletter-${ip}`);
 
@@ -58,6 +57,11 @@ export default async function actionSubmit(
       email,
       country,
     });
+
+    if (!db) {
+      console.warn("Skipping newsletter DB insert because database client is not configured");
+      return { status: "success" };
+    }
 
     const data: any = await db
       .select({ count: sql<number>`count(*)` })
