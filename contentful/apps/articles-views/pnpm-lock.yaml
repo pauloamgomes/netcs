@@ -33,8 +33,8 @@ importers:
         specifier: ^0.4.3
         version: 0.4.3
       contentful-management:
-        specifier: 10.38.3
-        version: 10.38.3
+        specifier: 10.40.0
+        version: 10.40.0
       drizzle-orm:
         specifier: ^0.29.5
         version: 0.29.5(@libsql/client@0.4.3)(@types/react@18.3.16)(react@18.3.1)
@@ -516,10 +516,6 @@ packages:
     peerDependencies:
       '@contentful/app-sdk': '>=4.0.0'
       react: '>=16.8.0'
-
-  '@contentful/rich-text-types@16.3.0':
-    resolution: {integrity: sha512-OfQmAu5bxE0CgQA3WlUleVej+ifFG/iXmB2DmUl4EyWyFue1aiIvfjxQhcDRSH4n1jUNMJ6L1wInZL8uV5m3TQ==}
-    engines: {node: '>=6.0.0'}
 
   '@contentful/rich-text-types@16.8.5':
     resolution: {integrity: sha512-q18RJuJCOuYveGiCIjE5xLCQc5lZ3L2Qgxrlg/H2YEobDFqdtmklazRi1XwEWaK3tMg6yVXBzKKkQfLB4qW14A==}
@@ -1092,9 +1088,6 @@ packages:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
 
-  axios@0.27.2:
-    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
-
   axios@1.7.9:
     resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
 
@@ -1211,17 +1204,17 @@ packages:
   compute-scroll-into-view@1.0.20:
     resolution: {integrity: sha512-UCB0ioiyj8CRjtrvaceBLqqhZCVP+1B8+NWQhmdsm0VXOJtobBCf1dBQmebCCo34qZmUwZfIH2MZLqNHazrfjg==}
 
-  contentful-management@10.38.3:
-    resolution: {integrity: sha512-hAuUSEfPYMQ6aplaENkZM5Zvhg9q+yiCsbm++pyHadUr5x+XKC9D85fASXuA4vI0hB/K66YHaqBiJ7CwAHT9bQ==}
+  contentful-management@10.40.0:
+    resolution: {integrity: sha512-73r3ecY7z69t6AdrUdyVUWxrIPJikp0FWqRl4kFbFkCd6tzohTN5gIAKLTupL06rvoKIfDOlgMKVypBVxxbrnQ==}
     engines: {node: '>=14'}
 
   contentful-management@11.40.0:
     resolution: {integrity: sha512-rmPREGAWVpcAQSXeKON/Iv7KbIevhqs89xVuO90EmHoj273szp6yGEtpSqueOMi3M1LQ2rpRWkvgRHAVrVNHvg==}
     engines: {node: '>=18'}
 
-  contentful-sdk-core@7.1.0:
-    resolution: {integrity: sha512-RzTPnRsbCdVAhyka3wa9sDsAu9YsxoerNgaMqd63Ljb7qpG2zkdHcP7NTfyIbuHDJNJdAQdifyafxfEEwP+q/w==}
-    engines: {node: '>=12'}
+  contentful-sdk-core@8.3.2:
+    resolution: {integrity: sha512-L2LNWRXb1/5RLpLemCoP2Lzz6211xyE63GXh2nVXekvM4Dnswo+9N2D6JmWTne9zq89Izo88vOGAzzIAxb4Ukw==}
+    engines: {node: '>=18'}
 
   contentful-sdk-core@9.0.1:
     resolution: {integrity: sha512-Ao/5Y74ERPn6kjzb/8okYPuQJnikMtR+dnv0plLw8IvPomwXonLq3qom0rLSyo5KuvQkBMa9AApy1izunxW4mw==}
@@ -1465,9 +1458,6 @@ packages:
   fast-copy@2.1.7:
     resolution: {integrity: sha512-ozrGwyuCTAy7YgFCua8rmqmytECYk/JYAMXcswOcm0qvGoE3tPb7ivBeIHTOK2DiapBhDZgacIhzhQIKU5TCfA==}
 
-  fast-copy@3.0.1:
-    resolution: {integrity: sha512-Knr7NOtK3HWRYGtHoJrjkaWepqT8thIVGAwt0p0aUs1zqkAzXZV4vo9fFNwyb5fcqK1GKYFYxldQdIDVKhUAfA==}
-
   fast-copy@3.0.2:
     resolution: {integrity: sha512-dl0O9Vhju8IrcLndv2eU4ldt1ftXMqqfgN4H1cpmGV7P6jeB9FwpN9a2c8DPGE1Ys88rNUJVYDHq73CGAGOPfQ==}
 
@@ -1486,15 +1476,6 @@ packages:
     resolution: {integrity: sha512-QFaHbhv9WPUeLYBDe/PAuLKJ4Dd9OPvKs9xZBr3yLXnUrDNaVXKu2baDBXe3naPY30hgHYSsf2JW4jzas2mDEQ==}
     engines: {node: '>=10'}
 
-  follow-redirects@1.15.5:
-    resolution: {integrity: sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-
   follow-redirects@1.15.9:
     resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
     engines: {node: '>=4.0'}
@@ -1506,10 +1487,6 @@ packages:
 
   for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
-
-  form-data@4.0.0:
-    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
-    engines: {node: '>= 6'}
 
   form-data@4.0.1:
     resolution: {integrity: sha512-tzN8e4TX8+kkxGPK8D5u0FNmjPUjw3lwC9lSLxxoB/+GtsJG91CO8bSWy73APlgAZzZbXEYZJuxjkHH2w+Ezhw==}
@@ -1940,10 +1917,6 @@ packages:
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  qs@6.11.2:
-    resolution: {integrity: sha512-tDNIz22aBzCDxLtVH++VnTfzxlfeK5CbqohpSqpJgj1Wg/cQbStNAz3NuqCs5vV+pjBsK4x4pN9HlVh7rcYRiA==}
-    engines: {node: '>=0.6'}
-
   qs@6.13.1:
     resolution: {integrity: sha512-EJPeIn0CYrGu+hli1xilKAPXODtJ12T0sP63Ijx2/khC2JtuaN3JyNIpvmnkmaEtha9ocbG4A4cMcr+TvqvwQg==}
     engines: {node: '>=0.6'}
@@ -2191,9 +2164,9 @@ packages:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
 
-  type-fest@3.13.1:
-    resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
-    engines: {node: '>=14.16'}
+  type-fest@4.41.0:
+    resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
+    engines: {node: '>=16'}
 
   typescript@5.7.2:
     resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
@@ -2546,7 +2519,7 @@ snapshots:
 
   '@contentful/app-sdk@4.22.0':
     dependencies:
-      contentful-management: 10.38.3
+      contentful-management: 10.40.0
     transitivePeerDependencies:
       - debug
 
@@ -3097,12 +3070,10 @@ snapshots:
   '@contentful/react-apps-toolkit@1.2.16(@contentful/app-sdk@4.22.0)(react@18.3.1)':
     dependencies:
       '@contentful/app-sdk': 4.22.0
-      contentful-management: 10.38.3
+      contentful-management: 10.40.0
       react: 18.3.1
     transitivePeerDependencies:
       - debug
-
-  '@contentful/rich-text-types@16.3.0': {}
 
   '@contentful/rich-text-types@16.8.5': {}
 
@@ -3534,7 +3505,7 @@ snapshots:
   '@types/node-fetch@2.6.11':
     dependencies:
       '@types/node': 16.18.122
-      form-data: 4.0.0
+      form-data: 4.0.1
 
   '@types/node@16.18.122': {}
 
@@ -3634,13 +3605,6 @@ snapshots:
   asynckit@0.4.0: {}
 
   available-typed-arrays@1.0.5: {}
-
-  axios@0.27.2:
-    dependencies:
-      follow-redirects: 1.15.5
-      form-data: 4.0.0
-    transitivePeerDependencies:
-      - debug
 
   axios@1.7.9:
     dependencies:
@@ -3784,15 +3748,15 @@ snapshots:
 
   compute-scroll-into-view@1.0.20: {}
 
-  contentful-management@10.38.3:
+  contentful-management@10.40.0:
     dependencies:
-      '@contentful/rich-text-types': 16.3.0
+      '@contentful/rich-text-types': 16.8.5
       '@types/json-patch': 0.0.30
-      axios: 0.27.2
-      contentful-sdk-core: 7.1.0
-      fast-copy: 3.0.1
+      axios: 1.7.9
+      contentful-sdk-core: 8.3.2
+      fast-copy: 3.0.2
       lodash.isplainobject: 4.0.6
-      type-fest: 3.13.1
+      type-fest: 4.41.0
     transitivePeerDependencies:
       - debug
 
@@ -3805,13 +3769,13 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  contentful-sdk-core@7.1.0:
+  contentful-sdk-core@8.3.2:
     dependencies:
       fast-copy: 2.1.7
       lodash.isplainobject: 4.0.6
       lodash.isstring: 4.0.1
       p-throttle: 4.1.1
-      qs: 6.11.2
+      qs: 6.13.1
 
   contentful-sdk-core@9.0.1:
     dependencies:
@@ -4023,8 +3987,6 @@ snapshots:
 
   fast-copy@2.1.7: {}
 
-  fast-copy@3.0.1: {}
-
   fast-copy@3.0.2: {}
 
   fetch-blob@3.2.0:
@@ -4042,19 +4004,11 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  follow-redirects@1.15.5: {}
-
   follow-redirects@1.15.9: {}
 
   for-each@0.3.3:
     dependencies:
       is-callable: 1.2.7
-
-  form-data@4.0.0:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      mime-types: 2.1.35
 
   form-data@4.0.1:
     dependencies:
@@ -4480,10 +4434,6 @@ snapshots:
 
   proxy-from-env@1.1.0: {}
 
-  qs@6.11.2:
-    dependencies:
-      side-channel: 1.0.4
-
   qs@6.13.1:
     dependencies:
       side-channel: 1.1.0
@@ -4730,7 +4680,7 @@ snapshots:
 
   type-fest@0.21.3: {}
 
-  type-fest@3.13.1: {}
+  type-fest@4.41.0: {}
 
   typescript@5.7.2: {}
 
